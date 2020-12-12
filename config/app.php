@@ -165,6 +165,9 @@ return [
         /*
          * Package Service Providers...
          */
+        \Api\Providers\ApiServiceProvider::class,
+        \Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        \Requester\RequesterServiceProvider::class,
 
         /*
          * Application Service Providers...

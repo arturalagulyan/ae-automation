@@ -42,9 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+            'driver' => 'passport',
+            'provider' => 'api-users',
         ],
     ],
 
@@ -70,11 +69,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'api-users' => [
+            'driver' => 'eloquent',
+            'model' => \Api\Models\User::class,
+        ],
     ],
 
     /*
@@ -114,4 +112,14 @@ return [
 
     'password_timeout' => 10800,
 
+    'passport' => [
+        'personal' => [
+            'id' => env('OAUTH_PERSONAL_CLIENT_ID'),
+            'secret' => env('OAUTH_PERSONAL_CLIENT_SECRET')
+        ],
+        'password' => [
+            'id' => env('OAUTH_PASSWORD_CLIENT_ID'),
+            'secret' => env('OAUTH_PASSWORD_CLIENT_SECRET')
+        ]
+    ],
 ];
