@@ -168,6 +168,7 @@ return [
         \Api\Providers\ApiServiceProvider::class,
         \Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Requester\RequesterServiceProvider::class,
+        \Renderer\Providers\RendererServiceProvider::class,
 
         /*
          * Application Service Providers...
