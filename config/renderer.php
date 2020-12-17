@@ -24,7 +24,8 @@ return [
     */
 
     'ae' => 'C:\\"Program Files"\\Adobe\\"Adobe After Effects 2020"\\"Support Files"\\aerender.exe',
-    'ffmpeg' => 'C:\\Users\\Bob\\AppData\\Local\\Temp\\nexrender\\ffmpeg-b4.2.2.exe',
+//    'ffmpeg' => 'C:\\Users\\Bob\\AppData\\Local\\Temp\\nexrender\\ffmpeg-b4.2.2.exe',
+    'ffmpeg' => 'C:\\ffmpeg\\ffmpeg-b4.2.2.exe',
 
     /*
     |--------------------------------------------------------------------------

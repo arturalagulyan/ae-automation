@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use Illuminate\Console\Command;
+use Renderer\Commands\Render\MultiCommand;
 use Renderer\Commands\Replicate\Nexrender\NexrenderCommand;
 use Renderer\Commands\ReplicateCommand;
 use Renderer\Commands\RenderCommand;
@@ -28,7 +29,7 @@ class Test extends Command
     protected $description = 'Test rendering';
 
     /**
-     * @var RenderCommand
+     * @var MultiCommand
      */
     protected $renderCommand;
 
@@ -39,10 +40,10 @@ class Test extends Command
 
     /**
      * Test constructor.
-     * @param RenderCommand $renderCommand
+     * @param MultiCommand $renderCommand
      * @param ReplicateCommand $nexrenderCommand
      */
-    public function __construct(RenderCommand $renderCommand, NexrenderCommand $nexrenderCommand)
+    public function __construct(MultiCommand $renderCommand, NexrenderCommand $nexrenderCommand)
     {
         parent::__construct();
 
@@ -57,7 +58,7 @@ class Test extends Command
      */
     public function handle()
     {
-        $this->nexrenderCommand->setData([
+        $replication = $this->nexrenderCommand->setData([
             'id' => 'test1234',
             'template' => 'nexrender-boilerplate'
         ])->setOptions([
@@ -66,6 +67,17 @@ class Test extends Command
                '--skip-cleanup',
            ]
         ])->execute();
+
+        $this->renderCommand
+            ->setData([
+                'id' => $replication['uid'],
+                'filename' => 'nexrender-boilerplate-v1-1',
+                'composition' => '!FINAL',
+                'sequence_n' => 4
+            ])->setOptions([
+                'frameRate' => 30,
+                'startFrame' => '0000',
+            ])->execute();
 
 //        $this->renderCommand->setData([
 //            'id' => 'test1234',

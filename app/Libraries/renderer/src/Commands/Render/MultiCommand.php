@@ -13,9 +13,13 @@ class MultiCommand extends BaseRenderCommand
      */
     public function execute()
     {
+        $this->createRenderFolder();
+
         if (!$this->executeSeqWavCommands()) {
             return false;
         }
+
+        $this->createOutputFolder();
 
         if (!$this->executeFFmpegCommand()) {
             return false;
@@ -29,8 +33,18 @@ class MultiCommand extends BaseRenderCommand
      */
     public function createRenderFolder()
     {
-        if (!file_exists($this->renderFolder)) {
-            mkdir($this->renderFolder, 0777, true);
+        if (!file_exists($this->getRenderFolder())) {
+            mkdir($this->getRenderFolder(), 0777, true);
+        }
+    }
+
+    /**
+     *
+     */
+    public function createOutputFolder()
+    {
+        if (!file_exists($this->getOutputFolder())) {
+            mkdir($this->getOutputFolder(), 0777, true);
         }
     }
 
@@ -39,7 +53,15 @@ class MultiCommand extends BaseRenderCommand
      */
     protected function getRenderFolder(): string
     {
-        return $this->config['render_folder'] . $this->data['id'];
+        return $this->config['render_folder'] . $this->data['id'] . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getOutputFolder(): string
+    {
+        return $this->config['outputs_folder'] . $this->data['id'] . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -78,7 +100,7 @@ class MultiCommand extends BaseRenderCommand
      */
     protected function checkCorruptedFiles()
     {
-        $files = glob($this->renderFolder . DIRECTORY_SEPARATOR . '*');
+        $files = glob($this->getRenderFolder() . '*');
 
         $corrupted = false;
 
@@ -106,6 +128,7 @@ class MultiCommand extends BaseRenderCommand
     protected function executeFFmpegCommand()
     {
         $command = $this->generateFFmpegCommand();
+
         return $this->runCommand($command);
     }
 
@@ -114,16 +137,12 @@ class MultiCommand extends BaseRenderCommand
      */
     protected function generateSeqCommand()
     {
-        $command1 = 'c:\"Program Files"\Adobe\"Adobe After Effects CC 2017"\"Support Files"\aerender.exe';
-        $command1 .= ' -project Z:\AEWatchFolder\{{filename}}.aep -comp "{{filename}}"';
-        $command1 .= ' -RStemplate "{{rsTemplate}}" -OMtemplate "{{omTemplate}}"';
-        $command1 .= ' -output "{{renderFolder}}\{{filename}}_[####]{{extension}}"';
-
-        $command1 = str_replace('{{filename}}', $this->message['filename'], $command1);
-        $command1 = str_replace('{{rsTemplate}}', $this->message['rs'], $command1);
-        $command1 = str_replace('{{omTemplate}}', $this->message['om'], $command1);
-        $command1 = str_replace('{{extension}}', $this->message['output_extension'], $command1);
-        $command1 = str_replace('{{renderFolder}}', $this->renderFolder, $command1);
+        $command1 = $this->config['ae'];
+        $command1 .= ' -project ' . $this->getAEP();
+        $command1 .= ' -comp ' . $this->data['composition'];
+        $command1 .= ' -RStemplate multi-best-full';
+        $command1 .= ' -OMtemplate jpeg-seq';
+        $command1 .= ' -output ' . $this->getRenderFolder() . '[####].jpg';
 
         return $command1;
     }
@@ -131,15 +150,21 @@ class MultiCommand extends BaseRenderCommand
     /**
      * @return string
      */
+    protected function getAEP()
+    {
+        return $this->config['replicate_folder'] . $this->data['id'] . DIRECTORY_SEPARATOR . $this->data['filename'] . '.aep';
+    }
+
+    /**
+     * @return string
+     */
     protected function generateWavCommand()
     {
-        $command2 = 'c:\"Program Files"\Adobe\"Adobe After Effects CC 2017"\"Support Files"\aerender.exe';
-        $command2 .= ' -project "Z:\AEWatchFolder\{{filename}}.aep" -comp "{{filename}}"';
-        $command2 .= ' -RStemplate "best-full" -OMtemplate "wav-audio"';
-        $command2 .= ' -output "{{renderFolder}}\{{filename}}.wav"';
-
-        $command2 = str_replace('{{filename}}', $this->message['filename'], $command2);
-        $command2 = str_replace('{{renderFolder}}', $this->renderFolder, $command2);
+        $command2 = $this->config['ae'];
+        $command2 .= ' -project ' . $this->getAEP();
+        $command2 .= ' -comp ' . $this->data['composition'];
+        $command2 .= ' -OMtemplate "wav-audio"';
+        $command2 .= ' -output ' . $this->getRenderFolder() . $this->data['filename'] . '.wav';
 
         return $command2;
     }
@@ -149,21 +174,15 @@ class MultiCommand extends BaseRenderCommand
      */
     protected function generateFFmpegCommand()
     {
-        $command3 = 'c:\test\ffmpeg\bin\ffmpeg';
-        $command3 .= ' -r {{frameRate}} -f image2 -start_number {{startFrame}}';
-        $command3 .= ' -i {{renderFolder}}\{{filename}}_%04d.jpg';
-        $command3 .= ' -i {{renderFolder}}\{{filename}}.wav -pix_fmt yuv420p';
-        $command3 .= ' {{renderFolder}}\{{filename}}.mp4';
-        $command3 .= ' {{codec}}';
+        $codec = '-c:v libx264 -b:v 16000k -c:a aac -strict experimental -b:a 128k -pix_fmt yuv420p';
 
-        $startFrame = 0000;
-        $codec = "-c:v libx264 -preset slower -crf 17 -c:a aac -b:a 128k";
-
-        $command3 = str_replace('{{codec}}', $codec, $command3);
-        $command3 = str_replace('{{startFrame}}', $startFrame, $command3);
-        $command3 = str_replace('{{renderFolder}}', $this->renderFolder, $command3);
-        $command3 = str_replace('{{frameRate}}', $this->message['video_fps'], $command3);
-        $command3 = str_replace('{{filename}}', $this->message['filename'], $command3);
+        $command3 = $this->config['ffmpeg'];
+        $command3 .= ' -r ' . $this->options['frameRate'];
+        $command3 .= ' -f image2';
+        $command3 .= ' -start_number ' . $this->options['startFrame'];
+        $command3 .= ' -i ' . $this->getRenderFolder() . '%04d.jpg';
+        $command3 .= ' ' . $this->getOutputFolder() . $this->data['filename'] . '.mp4';
+        $command3 .= ' ' . $codec;
 
         return $command3;
     }
