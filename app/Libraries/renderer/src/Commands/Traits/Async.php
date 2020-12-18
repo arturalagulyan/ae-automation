@@ -16,7 +16,7 @@ trait Async
     /**
      * @return bool
      */
-    public function runAsync(): bool
+    public function runAsync()
     {
         $this->process = proc_open(
             "start /B " . $this->commandWithOptions(),
@@ -33,7 +33,7 @@ trait Async
     /**
      * @return string
      */
-    public function killAsync(): string
+    public function killAsync()
     {
         return shell_exec(sprintf('wmic process where ParentProcessId=%s call terminate', $this->pid));
     }
@@ -41,7 +41,7 @@ trait Async
     /**
      * @return bool
      */
-    public function isWorking(): bool
+    public function isWorking()
     {
         return !!trim(shell_exec(sprintf('wmic process where ParentProcessId=%s', $this->pid)));
     }
