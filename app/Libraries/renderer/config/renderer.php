@@ -24,15 +24,24 @@ return [
     */
 
     'ae' => 'C:\\"Program Files"\\Adobe\\"Adobe After Effects 2020"\\"Support Files"\\aerender.exe',
-    'ffmpeg' => 'C:\\Users\\Bob\\AppData\\Local\\Temp\\nexrender\\ffmpeg-b4.2.2.exe',
+//    'ffmpeg' => 'C:\\Users\\Bob\\AppData\\Local\\Temp\\nexrender\\ffmpeg-b4.2.2.exe',
+    'ffmpeg' => 'C:\\ffmpeg\\ffmpeg-b4.2.2.exe',
 
     /*
     |--------------------------------------------------------------------------
-    | Nexrender server
+    | Nexrender config
     |--------------------------------------------------------------------------
     */
 
-    'nexrender_server_url' => 'http://localhost:3050/api/v1/',
+    'nexrender' => [
+        'secret' => 'test',
+        'cli' => 'nexrender-cli',
+        'server' => 'nexrender-server',
+        'worker' => 'nexrender-worker',
+        'options_json' => 'nexrender-options.json',
+        'api_url' =>  'http://localhost:3050/api/v1/',
+        'server_url' =>  'http://localhost:3050',
+    ],
 
     /*
     |--------------------------------------------------------------------------

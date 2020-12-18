@@ -1,5 +1,17 @@
 <?php
 
+if (!function_exists('renderer_conf')) {
+
+    /**
+     * @param $conf
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    function renderer_conf($conf)
+    {
+        return config('renderer.' . $conf);
+    }
+}
+
 if (!function_exists('renderer_copy_r')) {
 
     /**

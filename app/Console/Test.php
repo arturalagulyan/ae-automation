@@ -3,10 +3,7 @@
 namespace App\Console;
 
 use Illuminate\Console\Command;
-use Renderer\Commands\Render\MultiCommand;
-use Renderer\Commands\Replicate\Nexrender\NexrenderCommand;
-use Renderer\Commands\ReplicateCommand;
-use Renderer\Commands\RenderCommand;
+use Renderer\Renderer;
 
 /**
  * Class Test
@@ -29,61 +26,55 @@ class Test extends Command
     protected $description = 'Test rendering';
 
     /**
-     * @var MultiCommand
+     * @var Renderer
      */
-    protected $renderCommand;
-
-    /**
-     * @var ReplicateCommand
-     */
-    protected $nexrenderCommand;
+    protected $renderer;
 
     /**
      * Test constructor.
-     * @param MultiCommand $renderCommand
-     * @param ReplicateCommand $nexrenderCommand
+     * @param Renderer $renderer
      */
-    public function __construct(MultiCommand $renderCommand, NexrenderCommand $nexrenderCommand)
+    public function __construct(Renderer $renderer)
     {
         parent::__construct();
 
-        $this->renderCommand = $renderCommand;
-        $this->nexrenderCommand = $nexrenderCommand;
+        $this->renderer = $renderer;
     }
 
     /**
-     * Execute the console command.
-     *
      * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
     {
-        $replication = $this->nexrenderCommand->setData([
-            'id' => 'test1234',
-            'template' => 'nexrender-boilerplate'
-        ])->setOptions([
-           'options' => [
-               '--skip-render',
-               '--skip-cleanup',
-           ]
-        ])->execute();
-
-        $this->renderCommand
-            ->setData([
-                'id' => $replication['uid'],
-                'filename' => 'nexrender-boilerplate-v1-1',
+        $this->renderer->process([
+            'replication' => [
+                'template' => 'nexrender-boilerplate',
+                'options' => [
+                    'worker' => [
+                        '--skip-render',
+                        '--skip-cleanup',
+                    ]
+                ]
+            ],
+            'rendering' => [
                 'composition' => '!FINAL',
-                'sequence_n' => 4
-            ])->setOptions([
-                'frameRate' => 30,
-                'startFrame' => '0000',
-            ])->execute();
-
-//        $this->renderCommand->setData([
-//            'id' => 'test1234',
-//            'filename' => 'nexrender-boilerplate-v1-1',
-//            'composition' => '!FINAL',
-//            'output_extension' => 'mp4',
-//        ])->execute();
+                'filename' => 'nexrender-boilerplate-v1-1',
+                'options' => [
+                    'wav' => [
+                        '-OMtemplate "wav-audio"'
+                    ],
+                    'ffmpeg' => [
+                        '-r 30',
+                        '-start_number 0000',
+                        '-f image2',
+                    ],
+                    'seq' => [
+                        '-RStemplate multi-best-full',
+                        '-OMtemplate jpeg-seq'
+                    ]
+                ]
+            ]
+        ]);
     }
 }

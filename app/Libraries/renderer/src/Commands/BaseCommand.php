@@ -2,12 +2,7 @@
 
 namespace Renderer\Commands;
 
-use Renderer\Events\CommandFinished;
-use Renderer\Events\CommandKilled;
-use Renderer\Events\CommandProgress;
-use Renderer\Events\CommandStarted;
-use Renderer\Processor;
-use Renderer\Traits\Async;
+use Renderer\Commands\Traits\Async;
 
 /**
  * Class BaseCommand
@@ -18,6 +13,11 @@ abstract class BaseCommand
     use Async;
 
     /**
+     * @var resource|bool
+     */
+    protected $process;
+
+    /**
      * @var array
      */
     protected $data = [];
@@ -25,46 +25,27 @@ abstract class BaseCommand
     /**
      * @var array
      */
-    protected $config = [];
+    protected $options = [];
 
     /**
      * @var array
      */
-    protected $options = [];
-
-    /**
-     * @var Processor
-     */
-    protected $processor;
-
-    /**
-     * @var bool
-     */
-    protected $killed = false;
-
-    /**
-     * BaseCommand constructor.
-     * @param Processor $processor
-     */
-    public function __construct(Processor $processor)
-    {
-        $this->processor = $processor;
-        $this->config = config('renderer');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isKilled(): bool
-    {
-        return $this->killed;
-    }
+    protected $descriptorspec = [
+        [
+            'pipe',
+            'r'
+        ],
+        [
+            'pipe',
+            'w'
+        ],
+    ];
 
     /**
      * @param array $data
-     * @return $this
+     * @return BaseCommand
      */
-    public function setData(array $data): self
+    public function setData(array $data)
     {
         $this->data = $data;
 
@@ -75,7 +56,7 @@ abstract class BaseCommand
      * @param array $options
      * @return $this
      */
-    public function setOptions(array $options): self
+    public function setOptions(array $options)
     {
         $this->options = $options;
 
@@ -83,70 +64,58 @@ abstract class BaseCommand
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    abstract public function execute();
+    public abstract function command();
 
     /**
-     * @param $command
      * @return bool
      */
-    public function runCommand($command): bool
+    public function run()
     {
-        event(new CommandStarted([
-            'data' => $this->data,
-            'command' => $command,
-        ]));
-
         while (@ ob_end_flush());
-
-        $descriptorspec = array(
-            0 => array("pipe", "r"),
-            1 => array("pipe", "w"),
-        );
 
         flush();
 
-        $process = proc_open($command, $descriptorspec, $pipes);
+        $this->process = proc_open(
+            $this->commandWithOptions(),
+            $this->descriptorspec,
+            $pipes
+        );
 
-        $processId = $this->processor->getId($process);
-        $this->processor->save($this->data['id'], $processId);
-
-        if (is_resource($process)) {
+        if (is_resource($this->process)) {
             while ($s = fgets($pipes[1])) {
-
-                if ($this->processor->isKilled($this->data['id'], $processId)) {
-                    $this->killed = true;
-
-                    event(new CommandKilled([
-                        'data' => $this->data,
-                        'command' => $command,
-                        'process' => $process,
-                    ]));
-
-                    return false;
-                }
-
                 echo $s;
-
-                event(new CommandProgress([
-                    'data' => $this->data,
-                    'command' => $command,
-                    'line' => $s,
-                    'process' => $process,
-                ]));
-
                 flush();
             }
         }
 
-        $this->processor->remove($this->data['id'], $processId);
+        return $this->process;
+    }
 
-        event(new CommandFinished([
-            'data' => $this->data,
-            'command' => $command,
-        ]));
+    /**
+     * @return int
+     */
+    public function kill()
+    {
+        if (!is_resource($this->process)) {
+            return 0;
+        }
 
-        return true;
+        return proc_close($this->process);
+    }
+
+    /**
+     * @return string
+     */
+    protected function commandWithOptions()
+    {
+        $command = $this->command();
+
+        foreach ($this->options as $option) {
+            $command .= " $option";
+        }
+
+        return $command;
     }
 }
