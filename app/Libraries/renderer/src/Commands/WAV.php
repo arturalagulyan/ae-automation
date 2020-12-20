@@ -20,7 +20,6 @@ class WAV extends BaseCommand
         $command = renderer_conf('ae');
         $command .= ' -project ' . $this->getAEPFile();
         $command .= ' -comp ' . $this->data['composition'];
-//        $command .= ' -OMtemplate "wav-audio"';
         $command .= ' -output ' . $this->getWAVFile();
 
         return $command;

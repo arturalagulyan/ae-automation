@@ -1,12 +1,10 @@
 <?php
 
-namespace Renderer\Commands\Traits;
-
-use Renderer\Commands\BaseCommand;
+namespace Renderer\Commands;
 
 /**
  * Class StartWorker
- * @package Renderer\Commands\Traits
+ * @package Renderer\Commands
  */
 class StartWorker extends BaseCommand
 {

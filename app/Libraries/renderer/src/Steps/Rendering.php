@@ -65,7 +65,7 @@ class Rendering extends BaseStep
         }
 
         $this->checkCorruptedFiles();
-        $this->createOutputFolder();
+//        $this->createOutputFolder();
         $this->processFFMPEG();
 
         return true;
@@ -81,15 +81,15 @@ class Rendering extends BaseStep
         }
     }
 
-    /**
-     *
-     */
-    protected function createOutputFolder()
-    {
-        if (!file_exists($this->getOutputFolder())) {
-            mkdir($this->getOutputFolder(), 0777, true);
-        }
-    }
+//    /**
+//     *
+//     */
+//    protected function createOutputFolder()
+//    {
+//        if (!file_exists($this->getOutputFolder())) {
+//            mkdir($this->getOutputFolder(), 0777, true);
+//        }
+//    }
 
     /**
      *

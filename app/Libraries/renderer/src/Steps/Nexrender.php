@@ -3,7 +3,7 @@
 namespace Renderer\Steps;
 
 use Illuminate\Support\Arr;
-use Renderer\Commands\Traits\StartWorker;
+use Renderer\Commands\StartWorker;
 use Requester\Request;
 
 /**

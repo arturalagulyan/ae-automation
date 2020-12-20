@@ -20,8 +20,6 @@ class JpegSequence extends BaseCommand
         $command = renderer_conf('ae');
         $command .= ' -project ' . $this->getAEPFile();
         $command .= ' -comp ' . $this->data['composition'];
-//        $command .= ' -RStemplate multi-best-full';
-//        $command .= ' -OMtemplate jpeg-seq';
         $command .= ' -output ' . $this->getRenderFolder() . '[####].jpg';
 
         return $command;

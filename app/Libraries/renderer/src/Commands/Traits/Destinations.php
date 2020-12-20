@@ -13,7 +13,9 @@ trait Destinations
      */
     protected function getOutputFile()
     {
-        return $this->getOutputFolder() . $this->data['filename'] . '.mp4';
+        $filename = sprintf('%s-%s', $this->data['id'], $this->data['filename']);
+
+        return $this->getOutputFolder() . $filename . '.mp4';
     }
 
     /**
@@ -45,7 +47,7 @@ trait Destinations
      */
     protected function getOutputFolder()
     {
-        return renderer_conf('outputs_folder') . $this->data['id'] . DIRECTORY_SEPARATOR;
+        return renderer_conf('outputs_folder') . DIRECTORY_SEPARATOR;
     }
 
     /**
