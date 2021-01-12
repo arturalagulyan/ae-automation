@@ -3,10 +3,10 @@
 namespace Renderer\Events;
 
 /**
- * Class CommandKilled
+ * Class NexrenderFinished
  * @package Renderer\Events
  */
-class CommandKilled extends BaseEvent
+class NexrenderFinished extends BaseEvent
 {
 
 }

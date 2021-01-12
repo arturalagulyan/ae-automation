@@ -3,6 +3,7 @@
 namespace Renderer\Commands;
 
 use Renderer\Commands\Traits\Async;
+use Renderer\Traits\Loggable;
 
 /**
  * Class BaseCommand
@@ -10,7 +11,7 @@ use Renderer\Commands\Traits\Async;
  */
 abstract class BaseCommand
 {
-    use Async;
+    use Async, Loggable;
 
     /**
      * @var resource|bool
@@ -73,9 +74,9 @@ abstract class BaseCommand
      */
     public function run()
     {
-        while (@ ob_end_flush());
-
-        flush();
+//        while (@ ob_end_flush());
+//
+//        flush();
 
         $this->process = proc_open(
             $this->commandWithOptions(),
@@ -85,8 +86,9 @@ abstract class BaseCommand
 
         if (is_resource($this->process)) {
             while ($s = fgets($pipes[1])) {
-                echo $s;
-                flush();
+//                $this->log($s);
+//                echo $s;
+//                flush();
             }
         }
 

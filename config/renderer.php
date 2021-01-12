@@ -13,9 +13,7 @@ return [
     'templates_folder' => 'D:\\template-projects\\',
     'render_folder' => 'D:\\renders\\',
     'outputs_folder' => 'D:\\final-outputs\\',
-
-    'logs_folder' => storage_path('logs\\jobs\\'),
-    'processes_folder' => storage_path('processes'),
+    'logs_folder' => 'D:\\logs\\',
 
     /*
     |--------------------------------------------------------------------------

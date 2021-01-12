@@ -4,6 +4,8 @@ namespace Renderer\Steps;
 
 use Illuminate\Support\Arr;
 use Renderer\Commands\StartWorker;
+use Renderer\Events\NexrenderFinished;
+use Renderer\Events\NexrenderStarted;
 use Requester\Request;
 
 /**
@@ -83,6 +85,10 @@ class Nexrender extends BaseStep
     {
         $job = $this->startJob();
 
+        event(new NexrenderStarted([
+            'job' => $job
+        ]));
+
         while (true) {
             sleep(3);
 
@@ -92,6 +98,10 @@ class Nexrender extends BaseStep
                 break;
             }
         }
+
+        event(new NexrenderFinished([
+            'job' => $job
+        ]));
 
         return $job;
     }

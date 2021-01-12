@@ -7,6 +7,10 @@ use Renderer\Commands\Traits\Destinations;
 use Renderer\Commands\FFMPEG;
 use Renderer\Commands\JpegSequence;
 use Renderer\Commands\WAV;
+use Renderer\Events\FFMPEGFinished;
+use Renderer\Events\FFMPEGStarted;
+use Renderer\Events\RenderingFinished;
+use Renderer\Events\RenderingStarted;
 
 /**
  * Class Rendering
@@ -54,8 +58,29 @@ class Rendering extends BaseStep
     public function process()
     {
         $this->createRenderFolder();
+
+        $this->processRendering();
+
+//        $this->createOutputFolder();
+
+        $this->processFFMPEG();
+
+        return true;
+    }
+
+    /**
+     *
+     */
+    protected function processRendering()
+    {
+        $this->wavCommand->setLogFile($this->data['id']);
+        $this->jpegSequenceCommand->setLogFile($this->data['id']);
+
         $this->processJpegSequence();
         $this->processWav();
+
+        $startedAt = now();
+        event(new RenderingStarted($this->data));
 
         while (
             $this->wavCommand->isWorking() ||
@@ -65,10 +90,11 @@ class Rendering extends BaseStep
         }
 
         $this->checkCorruptedFiles();
-//        $this->createOutputFolder();
-        $this->processFFMPEG();
 
-        return true;
+        $finishedAt = now();
+        event(new RenderingFinished(array_merge($this->data, [
+            'seconds' => $finishedAt->diffInSeconds($startedAt)
+        ])));
     }
 
     /**
@@ -127,12 +153,21 @@ class Rendering extends BaseStep
     protected function processFFMPEG()
     {
         $this->ffmpegCommand->setData($this->data);
+        $this->ffmpegCommand->setLogFile($this->data['id']);
 
         if (Arr::get($this->data, 'options.ffmpeg')) {
             $this->ffmpegCommand->setOptions($this->data['options']['ffmpeg']);
         }
 
+        $startedAt = now();
+        event(new FFMPEGStarted($this->data));
+
         $this->ffmpegCommand->run();
+
+        $finishedAt = now();
+        event(new FFMPEGFinished(array_merge($this->data, [
+            'seconds' => $finishedAt->diffInSeconds($startedAt)
+        ])));
     }
 
     /**

@@ -3,10 +3,10 @@
 namespace Renderer\Events;
 
 /**
- * Class CommandProgress
+ * Class RenderingFinished
  * @package Renderer\Events
  */
-class CommandProgress extends BaseEvent
+class RenderingFinished extends BaseEvent
 {
 
 }

@@ -4,14 +4,18 @@ namespace Renderer\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Renderer\Events\CommandFinished;
-use Renderer\Events\CommandKilled;
-use Renderer\Events\CommandProgress;
-use Renderer\Events\CommandStarted;
-use Renderer\Listeners\LogCommandFinished;
-use Renderer\Listeners\LogCommandKilled;
-use Renderer\Listeners\LogCommandProgress;
-use Renderer\Listeners\LogCommandStarted;
+use Renderer\Events\FFMPEGFinished;
+use Renderer\Events\FFMPEGStarted;
+use Renderer\Events\NexrenderFinished;
+use Renderer\Events\NexrenderStarted;
+use Renderer\Events\RenderingFinished;
+use Renderer\Events\RenderingStarted;
+use Renderer\Listeners\LogFFMPEGFinished;
+use Renderer\Listeners\LogFFMPEGStarted;
+use Renderer\Listeners\LogNexrenderFinished;
+use Renderer\Listeners\LogNexrenderStarted;
+use Renderer\Listeners\LogRenderingFinished;
+use Renderer\Listeners\LogRenderingStarted;
 
 /**
  * Class EventServiceProvider
@@ -23,17 +27,23 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $eventListeners = [
-        CommandStarted::class => [
-            LogCommandStarted::class
+        NexrenderStarted::class => [
+            LogNexrenderStarted::class
         ],
-        CommandProgress::class => [
-            LogCommandProgress::class
+        NexrenderFinished::class => [
+            LogNexrenderFinished::class
         ],
-        CommandFinished::class => [
-            LogCommandFinished::class
+        RenderingStarted::class => [
+            LogRenderingStarted::class
         ],
-        CommandKilled::class => [
-            LogCommandKilled::class
+        RenderingFinished::class => [
+            LogRenderingFinished::class
+        ],
+        FFMPEGStarted::class => [
+            LogFFMPEGStarted::class
+        ],
+        FFMPEGFinished::class => [
+            LogFFMPEGFinished::class
         ],
     ];
 
