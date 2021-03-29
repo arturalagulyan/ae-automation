@@ -16,7 +16,7 @@ class Render extends Command
      *
      * @var string
      */
-    protected $signature = 'render:start {--project=}';
+    protected $signature = 'render {--project=}';
 
     /**
      * The console command description.
