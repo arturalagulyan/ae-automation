@@ -6,17 +6,17 @@ use Illuminate\Console\Command;
 use Renderer\Renderer;
 
 /**
- * Class Test
+ * Class Render
  * @package App\Console
  */
-class Test extends Command
+class Render extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'render:test {--project=}';
+    protected $signature = 'render:start {--project=}';
 
     /**
      * The console command description.
