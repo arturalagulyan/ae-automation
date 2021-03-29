@@ -1,62 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Celebrity Simulator Backend
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Installation
 
-## About Laravel
+- Clone project from repository - ``git clone git@github.com:RobertPS62/celebritysimulator.git``
+- Create DB and set credentials in .env file
+- In project directory run ``composer install`` then ``npm install``
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Executing project from command line
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Add project files in ``'D:\\template-projects\\'`` and assets in ``'D:\\assets\\'`` (both can be managed from config)
+- Start nexrender server via ``nexrender-server --port=3050 --secret=test`` (the ``test`` key can be managed from config)
+- From command line change directory to ``celebritysimulator`` destination (wherever you cloned the repository).
+- Run ``php artisan render {--project=}`` command (in case of ``paparazzi-themed`` project it will be ``php artisan render --project paparazzi-themed``)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Project structure
 
-## Learning Laravel
+Is a .json file which contains information how rendering and replication must be processed. Each of this files is responsible for individual project. Initially location must be in ``'D:\\backend-projects\\'`` (can be managed from config).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```sh
+{
+    "replication": {
+        "template": TEMPLATE_NAME,
+        "options": {
+            "worker": [
+                ...WORKER_OPTIONS (array)
+            ]
+        }
+    },
+    "rendering": {
+        "composition": COMPOSITION_NAME,
+        "filename": FILE_NAME,
+        "sequence_n": SEQUENCE_N,
+        "options": {
+            "wav": [
+                ...WAV_COMMAND_OPTIONS (array)
+            ],
+            "ffmpeg": [
+                ...FFMPEG_COMMAND_OPTIONS (array)
+            ],
+            "seq": [
+                ...FRAMES_COMMAND_OPTIONS (array)
+            ]
+        }
+    }
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **TEMPLATE_NAME**: The name of template located in ``'D:\\template-projects\\'`` (can be managed from config) which must be processed. Example: ``paparazzi-themed``
+- **WORKER_OPTIONS**: Additional options for ``nexrender-worker`` command. Example:
+```
+[
+    "--skip-render",
+    "--skip-cleanup",
+    "--aerender-parameter \"close SAVE_CHANGES\""
+]
+```
+- **COMPOSITION_NAME**: The name of composition. Example: ``!FINAL``
+- **FILE_NAME**: Output file name. Example: ``paparazzi-v1-1``
+- **SEQUENCE_N**: Option defining how many times frames command must work. Example: ``7``
+- **WAV_COMMAND_OPTIONS**: Additional options for WAV command. Example:
+```
+[
+    "-OMtemplate \"wav-audio\""
+]
+```
+- **FFMPEG_COMMAND_OPTIONS**: Additional options for FFMPEG command. Example:
+```
+[
+    "-r 25",
+    "-start_number 0000",
+    "-f image2"
+]
+```
+- **FRAMES_COMMAND_OPTIONS**: Additional options for Frames command. Example:
+```
+[
+    "-RStemplate multi-best-full",
+    "-OMtemplate jpeg-seq"
+]
+```
 
-## Laravel Sponsors
+## Full example
+```
+{
+    "replication": {
+        "template": "paparazzi-themed",
+        "options": {
+            "worker": [
+                "--skip-render",
+                "--skip-cleanup",
+                "--aerender-parameter \"close SAVE_CHANGES\""
+            ]
+        }
+    },
+    "rendering": {
+        "composition": "!FINAL",
+        "filename": "paparazzi-v1-1",
+        "sequence_n": 7,
+        "options": {
+            "wav": [
+                "-OMtemplate \"wav-audio\""
+            ],
+            "ffmpeg": [
+                "-r 25",
+                "-start_number 0000",
+                "-f image2"
+            ],
+            "seq": [
+                "-RStemplate multi-best-full",
+                "-OMtemplate jpeg-seq"
+            ]
+        }
+    }
+}
+```
+All directory and program paths can be managed from ``/config/renderer.php`` file
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Directories
 
-### Premium Partners
+| Folder | Destination |
+| ------ | ------ |
+| Replication folder | ``C:\\nexrender\\`` |
+| Assets folder | ``D:\\assets\\`` |
+| Templates folder | ``D:\\template-projects\\`` |
+| Render folder | ``D:\\renders\\`` |
+| Outputs folder | ``D:\\final-outputs\\`` |
+| Logs folder | ``D:\\logs\\`` |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+## Programs
 
-## Contributing
+| Program | Destination |
+| ------ | ------ |
+| After Effects | ``C:\\"Program Files"\\Adobe\\"Adobe After Effects 2020"\\"Support Files"\\aerender.exe`` |
+| FFMPEG | ``C:\\ffmpeg\\ffmpeg-b4.2.2.exe`` |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
