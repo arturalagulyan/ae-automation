@@ -8,12 +8,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'replicate_folder' => 'C:\\nexrender\\',
-    'assets_folder' => 'D:\\assets\\',
-    'templates_folder' => 'D:\\template-projects\\',
-    'render_folder' => 'D:\\renders\\',
-    'outputs_folder' => 'D:\\final-outputs\\',
-    'logs_folder' => 'D:\\logs\\',
+    'replicate_folder' => env('REPLICATE_FOLDER'),
+    'assets_folder' => env('ASSETS_FOLDER'),
+    'templates_folder' => env('TEMPLATES_FOLDER'),
+    'render_folder' => env('RENDER_FOLDER'),
+    'outputs_folder' => env('OUTPUTS_FOLDER'),
+    'logs_folder' => env('LOGS_FOLDER'),
 
     /*
     |--------------------------------------------------------------------------
@@ -21,9 +21,9 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'ae' => 'C:\\"Program Files"\\Adobe\\"Adobe After Effects 2020"\\"Support Files"\\aerender.exe',
+    'ae' => env('AE_BINARY'),
 //    'ffmpeg' => 'C:\\Users\\Bob\\AppData\\Local\\Temp\\nexrender\\ffmpeg-b4.2.2.exe',
-    'ffmpeg' => 'C:\\ffmpeg\\ffmpeg-b4.2.2.exe',
+    'ffmpeg' => env('FFMPEG_BINARY'),
 
     /*
     |--------------------------------------------------------------------------
