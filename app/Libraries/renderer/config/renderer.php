@@ -14,6 +14,8 @@ return [
     'render_folder' => env('RENDER_FOLDER'),
     'outputs_folder' => env('OUTPUTS_FOLDER'),
     'logs_folder' => env('LOGS_FOLDER'),
+    'projects_folder' => env('PROJECTS_FOLDER'),
+    'uploads_folder' => env('UPLOADS_FOLDER'),
 
     /*
     |--------------------------------------------------------------------------

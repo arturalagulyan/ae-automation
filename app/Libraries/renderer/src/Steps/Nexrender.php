@@ -158,7 +158,7 @@ class Nexrender extends BaseStep
         $options = $this->getOptionsJsonArray();
 
         if (Arr::get($this->data, 'json')) {
-            $options = array_merge_recursive($options, $this->data['json']);
+            $options = array_replace($options, $this->data['json']);
         }
 
         return $options;

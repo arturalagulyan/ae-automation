@@ -31,11 +31,6 @@ class Render extends Command
     protected $renderer;
 
     /**
-     * @var string
-     */
-    protected $configRoot = 'D:\\backend-projects\\';
-
-    /**
      * Test constructor.
      * @param Renderer $renderer
      */
@@ -60,7 +55,9 @@ class Render extends Command
      */
     protected function getConfig()
     {
-        $json = $this->configRoot . $this->option('project') . '.json';
+        $projectsFolder = renderer_conf('projects_folder');
+
+        $json = $projectsFolder . $this->option('project') . '.json';
 
         if (!file_exists($json)) {
             throw new \Exception('Wrong project name');

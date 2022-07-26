@@ -44,7 +44,9 @@ class Renderer
     {
         $job = $this->replication->setData($options['replication'])->process();
 
-        $options['rendering']['id'] = $job['uid'];
-        $this->rendering->setData($options['rendering'])->process();
+        if (!empty($options['rendering'])) {
+            $options['rendering']['id'] = $job['uid'];
+            $this->rendering->setData($options['rendering'])->process();
+        }
     }
 }

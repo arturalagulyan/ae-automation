@@ -12,10 +12,12 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^2.5",
         "laravel/framework": "^8.12",
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
         "league/fractal": "^0.19.2",
+        "pbmedia/laravel-ffmpeg": "^7.5",
         "prettus/l5-repository": "^2.7",
         "spatie/laravel-permission": "^3.18"
     },
@@ -42,6 +44,7 @@
             "App\\": "app/",
             "Renderer\\": "app/Libraries/renderer/src",
             "Requester\\": "app/Libraries/requester/src",
+            "Uploader\\": "app/Libraries/uploader/src",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
