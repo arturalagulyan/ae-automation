@@ -95,7 +95,8 @@ class UploadService extends BaseApiService
             }
 
             $config = json_decode(file_get_contents($json), true);
-            $config['replication']['data'] = $data;
+            $config['data'] = $data;
+            $config['upload_id'] = $uploadId;
             $config['replication']['json']['assets'] = [
                 [
                     'src' => 'file:///' . $data['photo1']['fullPath'],
@@ -119,7 +120,8 @@ class UploadService extends BaseApiService
                 ]
             ];
 
-            $this->nexrender->setData($config['replication'])->process();
+            $job = $this->nexrender->setData($config['replication'])->process();
+            $config['job_id'] = $job['uid'];
 
             $this->repository->commitTransaction();
 
