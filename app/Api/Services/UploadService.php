@@ -88,7 +88,7 @@ class UploadService extends BaseApiService
             $data['photo4'] = $this->uploader->upload($data['photo4']);
 
             $projectsFolder = renderer_conf('projects_folder');
-            $json = $projectsFolder . 'notokay-v0_2.json';
+            $json = $projectsFolder . $data['project'] . '.json';
 
             if (!file_exists($json)) {
                 throw new Exception('Wrong project name');
