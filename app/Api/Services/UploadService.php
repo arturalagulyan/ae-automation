@@ -8,6 +8,8 @@ use Api\Transformers\UploadTransformer;
 use Api\Validators\UploadValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 use Renderer\Renderer;
 use Renderer\Steps\Nexrender;
@@ -122,6 +124,9 @@ class UploadService extends BaseApiService
 
             $job = $this->nexrender->setData($config['replication'])->process();
             $config['job_id'] = $job['uid'];
+
+            $uploadedJson = $config['job_id'] . '\\upload.json';
+            File::put(renderer_conf('replicate_folder') . $uploadedJson, json_encode($data));
 
             $this->repository->commitTransaction();
 
