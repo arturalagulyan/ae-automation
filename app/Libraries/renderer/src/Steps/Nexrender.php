@@ -109,13 +109,13 @@ class Nexrender extends BaseStep
                 event(new NexrenderFailed([
                     'job' => $job
                 ]));
-                break;
+                return $job;
             }
             if ($job['state'] === 'finished') {
                 event(new NexrenderFinished([
                     'job' => $job
                 ]));
-                break;
+                return $job;
             }
         }
 
