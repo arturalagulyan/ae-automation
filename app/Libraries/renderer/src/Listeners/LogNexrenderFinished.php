@@ -26,7 +26,7 @@ class LogNexrenderFinished extends BaseListener
         $seconds = $finishedAt->diffInSeconds($startedAt);
 
         $content = "Replication Finished ($seconds)s" . PHP_EOL . PHP_EOL;
-//        $content .= 'Job: ' . json_encode($data['job'], JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
+        $content .= 'Job: ' . json_encode($data['job'], JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
 
         $this->setLogFile($data['job']['uid'])->log($content);
     }

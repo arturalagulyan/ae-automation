@@ -6,13 +6,17 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Renderer\Events\FFMPEGFinished;
 use Renderer\Events\FFMPEGStarted;
+use Renderer\Events\NexrenderFailed;
 use Renderer\Events\NexrenderFinished;
+use Renderer\Events\NexrenderStacked;
 use Renderer\Events\NexrenderStarted;
 use Renderer\Events\RenderingFinished;
 use Renderer\Events\RenderingStarted;
 use Renderer\Listeners\LogFFMPEGFinished;
 use Renderer\Listeners\LogFFMPEGStarted;
+use Renderer\Listeners\LogNexrenderFailed;
 use Renderer\Listeners\LogNexrenderFinished;
+use Renderer\Listeners\LogNexrenderStacked;
 use Renderer\Listeners\LogNexrenderStarted;
 use Renderer\Listeners\LogRenderingFinished;
 use Renderer\Listeners\LogRenderingStarted;
@@ -32,6 +36,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         NexrenderFinished::class => [
             LogNexrenderFinished::class
+        ],
+        NexrenderFailed::class => [
+            LogNexrenderFailed::class
+        ],
+        NexrenderStacked::class => [
+            LogNexrenderStacked::class
         ],
         RenderingStarted::class => [
             LogRenderingStarted::class

@@ -2,25 +2,25 @@
 
 namespace Renderer\Listeners;
 
-use Renderer\Events\NexrenderStarted;
+use Renderer\Events\NexrenderFailed;
 use Renderer\Traits\Loggable;
 
 /**
- * Class LogNexrenderStarted
+ * Class LogNexrenderFailed
  * @package Renderer\Listeners
  */
-class LogNexrenderStarted extends BaseListener
+class LogNexrenderFailed extends BaseListener
 {
     use Loggable;
 
     /**
-     * @param NexrenderStarted $event
+     * @param NexrenderFailed $event
      */
-    public function handle(NexrenderStarted $event)
+    public function handle(NexrenderFailed $event)
     {
         $data = $event->getData();
 
-        $content = 'Replication Started' . PHP_EOL . PHP_EOL;
+        $content = "Replication Failed" . PHP_EOL . PHP_EOL;
         $content .= 'Job: ' . json_encode($data['job'], JSON_PRETTY_PRINT) . PHP_EOL . PHP_EOL;
 
         $this->setLogFile($data['job']['uid'])->log($content);

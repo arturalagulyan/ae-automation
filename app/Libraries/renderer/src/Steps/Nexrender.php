@@ -4,7 +4,9 @@ namespace Renderer\Steps;
 
 use Illuminate\Support\Arr;
 use Renderer\Commands\StartWorker;
+use Renderer\Events\NexrenderFailed;
 use Renderer\Events\NexrenderFinished;
+use Renderer\Events\NexrenderStacked;
 use Renderer\Events\NexrenderStarted;
 use Requester\Request;
 
@@ -49,11 +51,17 @@ class Nexrender extends BaseStep
     {
         $this->startWorker();
 
-        $job = $this->runJob();
+        try {
+            $job = $this->runJob();
 
-        $this->stopWorker();
+            $this->stopWorker();
 
-        return $job;
+            return $job;
+        } catch (\Exception $exception) {
+            $this->stopWorker();
+
+            throw $exception;
+        }
     }
 
     /**
@@ -89,17 +97,29 @@ class Nexrender extends BaseStep
             'job' => $job
         ]));
 
-        while (true) {
+        $seconds = 0;
+
+        while ($seconds < 100) {
             sleep(3);
+            $seconds = $seconds + 3;
 
             $job = $this->statusJob($job['uid']);
 
-            if ($job['state'] === 'finished' || $job['state'] === 'error') {
+            if ($job['state'] === 'error') {
+                event(new NexrenderFailed([
+                    'job' => $job
+                ]));
+                break;
+            }
+            if ($job['state'] === 'finished') {
+                event(new NexrenderFinished([
+                    'job' => $job
+                ]));
                 break;
             }
         }
 
-        event(new NexrenderFinished([
+        event(new NexrenderStacked([
             'job' => $job
         ]));
 
@@ -122,7 +142,7 @@ class Nexrender extends BaseStep
             ->post('jobs');
 
         if ($job->isFailure()) {
-            return null;
+            throw new \Exception('Job creation failed');
         }
 
         return $job->data();
@@ -144,7 +164,7 @@ class Nexrender extends BaseStep
             ->get('jobs/' . $id);
 
         if ($job->isFailure()) {
-            return null;
+            throw new \Exception('Getting job status failed');
         }
 
         return $job->data();
