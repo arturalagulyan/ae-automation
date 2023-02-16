@@ -10,6 +10,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Renderer\Renderer;
 use Renderer\Steps\Nexrender;
@@ -79,15 +80,31 @@ class UploadService extends BaseApiService
                 'filesystems.disks.public.root' => $uploadsFolder
             ]);
 
-            $uploadId = now()->toDateString() . '-' . uniqid();
+            $photoName = sprintf(
+                '%s_%s.%s',
+                $data['photo_id'],
+                $data['photo_number'],
+                $data['photo']->extension()
+            );
 
-            $this->uploader->setDiskKey(UploaderConstants::DISK_PUBLIC);
-            $this->uploader->setStoragePath($uploadId);
+            $data['photo' . $data['photo_number']] = $this->uploader
+                ->setDiskKey(UploaderConstants::DISK_PUBLIC)
+                ->setStoragePath($data['photo_id'])
+                ->setFileName($photoName)
+                ->upload($data['photo']);
 
-            $data['photo1'] = $this->uploader->upload($data['photo1']);
-            $data['photo2'] = $this->uploader->upload($data['photo2']);
-            $data['photo3'] = $this->uploader->upload($data['photo3']);
-            $data['photo4'] = $this->uploader->upload($data['photo4']);
+            $files = $this->uploader->getFilesInDirectory($data['photo_id']);
+            $uploadedJson = $uploadsFolder . $data['photo_id'] . '\\upload.json';
+
+            if (count($files) > 1) {
+                $data = array_merge(json_decode(File::get($uploadedJson), true), $data);
+            }
+
+            File::put($uploadedJson, json_encode($data));
+
+            if (count($files) < 5) {
+                return $data;
+            }
 
             $projectsFolder = renderer_conf('projects_folder');
             $json = $projectsFolder . $data['project'] . '.json';
@@ -98,7 +115,7 @@ class UploadService extends BaseApiService
 
             $config = json_decode(file_get_contents($json), true);
             $config['data'] = $data;
-            $config['upload_id'] = $uploadId;
+            $config['upload_id'] = $data['photo_id'];
             $config['replication']['json']['assets'] = [
                 [
                     'src' => 'file:///' . $data['photo1']['fullPath'],

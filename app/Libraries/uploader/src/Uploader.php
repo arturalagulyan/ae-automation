@@ -112,6 +112,15 @@ class Uploader
     }
 
     /**
+     * @param string $directory
+     * @return array
+     */
+    public function getFilesInDirectory(string $directory): array
+    {
+        return Storage::disk($this->storageDisk)->files($directory);
+    }
+
+    /**
      * @param UploadedFile $file
      * @param array $options
      * @return array
