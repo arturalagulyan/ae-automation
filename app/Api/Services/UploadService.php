@@ -102,52 +102,54 @@ class UploadService extends BaseApiService
 
             File::put($uploadedJson, json_encode($data));
 
-            if (count($files) < 5) {
-                return $data;
-            }
+//            if (count($files) < 5) {
+//                return $data;
+//            }
 
-            $projectsFolder = renderer_conf('projects_folder');
-            $json = $projectsFolder . $data['project'] . '.json';
+            return $data;
 
-            if (!file_exists($json)) {
-                throw new Exception('Wrong project name');
-            }
-
-            $config = json_decode(file_get_contents($json), true);
-            $config['data'] = $data;
-            $config['upload_id'] = $data['photo_id'];
-            $config['replication']['json']['assets'] = [
-                [
-                    'src' => 'file:///' . $data['photo1']['fullPath'],
-                    'type' => 'image',
-                    'layerName' => 'customer-image_1',
-                ],
-                [
-                    'src' => 'file:///' . $data['photo2']['fullPath'],
-                    'type' => 'image',
-                    'layerName' => 'customer-image_2',
-                ],
-                [
-                    'src' => 'file:///' . $data['photo3']['fullPath'],
-                    'type' => 'image',
-                    'layerName' => 'customer-image_3',
-                ],
-                [
-                    'src' => 'file:///' . $data['photo4']['fullPath'],
-                    'type' => 'image',
-                    'layerName' => 'customer-image_4',
-                ]
-            ];
-
-            $job = $this->nexrender->setData($config['replication'])->process();
-            $config['job_id'] = $job['uid'];
-
-            $uploadedJson = $config['job_id'] . '\\upload.json';
-            File::put(renderer_conf('replicate_folder') . $uploadedJson, json_encode($data));
+//            $projectsFolder = renderer_conf('projects_folder');
+//            $json = $projectsFolder . $data['project'] . '.json';
+//
+//            if (!file_exists($json)) {
+//                throw new Exception('Wrong project name');
+//            }
+//
+//            $config = json_decode(file_get_contents($json), true);
+//            $config['data'] = $data;
+//            $config['upload_id'] = $data['photo_id'];
+//            $config['replication']['json']['assets'] = [
+//                [
+//                    'src' => 'file:///' . $data['photo1']['fullPath'],
+//                    'type' => 'image',
+//                    'layerName' => 'customer-image_1',
+//                ],
+//                [
+//                    'src' => 'file:///' . $data['photo2']['fullPath'],
+//                    'type' => 'image',
+//                    'layerName' => 'customer-image_2',
+//                ],
+//                [
+//                    'src' => 'file:///' . $data['photo3']['fullPath'],
+//                    'type' => 'image',
+//                    'layerName' => 'customer-image_3',
+//                ],
+//                [
+//                    'src' => 'file:///' . $data['photo4']['fullPath'],
+//                    'type' => 'image',
+//                    'layerName' => 'customer-image_4',
+//                ]
+//            ];
+//
+//            $job = $this->nexrender->setData($config['replication'])->process();
+//            $config['job_id'] = $job['uid'];
+//
+//            $uploadedJson = $config['job_id'] . '\\upload.json';
+//            File::put(renderer_conf('replicate_folder') . $uploadedJson, json_encode($data));
 
             $this->repository->commitTransaction();
 
-            return $config;
+//            return $config;
         } catch (Exception $exception) {
             $this->repository->rollBackTransaction();
             throw $exception;
