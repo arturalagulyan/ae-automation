@@ -2,7 +2,7 @@
 
 ## Installation
 
-- Clone project from repository - ``git clone git@github.com:RobertPS62/celebritysimulator.git``
+- Clone project from repository - ``git clone git@github.com:arturalagulyan/ae-automation.git``
 - Create DB and set credentials in .env file
 - In project directory run ``composer install`` then ``npm install``
 
