@@ -10,7 +10,7 @@
 
 - Add project files in ``'D:\\template-projects\\'`` and assets in ``'D:\\assets\\'`` (both can be managed from config)
 - Start nexrender server via ``nexrender-server --port=3050 --secret=test`` (the ``test`` key can be managed from config)
-- From command line change directory to ``celebritysimulator`` destination (wherever you cloned the repository).
+- From command line change directory to ``ae-automation`` destination (wherever you cloned the repository).
 - Run ``php artisan render {--project=}`` command (in case of ``paparazzi-themed`` project it will be ``php artisan render --project paparazzi-themed``)
 
 ## Project structure
